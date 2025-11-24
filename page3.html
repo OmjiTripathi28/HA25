@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Memory Constellation</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-love: #e6007a;
+            --secondary-love: #ff85c0;
+            --accent-gold: #FFD700;
+            --background-dark: #1a0210;
+            --text-light: #fdeaf5;
+            --font-heading: 'Sacramento', cursive;
+            --font-body: 'Playfair Display', serif;
+            --font-sans: 'Montserrat', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--background-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            font-family: var(--font-sans);
+            color: var(--text-light);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .header-title {
+            font-family: var(--font-heading);
+            font-size: clamp(3rem, 8vw, 6rem);
+            color: var(--accent-gold);
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .subtitle {
+            font-family: var(--font-body);
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--secondary-love);
+            margin-bottom: 40px;
+            text-align: center;
+            max-width: 800px;
+            z-index: 10;
+        }
+
+        /* --- COLLAGE GRID LAYOUT (The Constellation) --- */
+        .collage-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, auto);
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+            margin-bottom: 60px;
+            z-index: 10;
+        }
+
+        /* Center Video Slot */
+        .grid-item:nth-child(5) {
+            grid-column: 2 / 3;
+            grid-row: 2 / 3;
+            /* Ensure the central video is prominent */
+            box-shadow: 0 0 30px var(--primary-love), 0 0 5px var(--secondary-love) inset;
+            border: 3px solid var(--accent-gold);
+            overflow: hidden;
+            border-radius: 15px;
+            position: relative;
+            /* Ensure it is roughly square or responsive */
+            padding-top: 100%; 
+            height: 0;
+        }
+
+        .center-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        
+        /* All image item styles */
+        .grid-item {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            /* Make images responsive */
+            padding-top: 100%; 
+            height: 0;
+        }
+
+        .grid-item img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* Hover effects on the anchor images */
+        .grid-item.anchor:hover {
+            transform: scale(1.05) rotate(-1deg);
+            box-shadow: 0 0 25px var(--secondary-love);
+        }
+
+        /* Transition classes for the memory swap */
+        .img-fading-out {
+            opacity: 0;
+            transition: opacity 0.2s ease-in;
+        }
+        .img-fading-in {
+            opacity: 1;
+            transition: opacity 0.3s ease-out 0.2s; /* Delay fade-in slightly */
+        }
+        
+        /* --- NAVIGATION BUTTONS --- */
+        .nav-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 30px;
+            z-index: 10;
+        }
+
+        .nav-button {
+            display: inline-block;
+            padding: 12px 30px;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            color: var(--background-dark);
+            background: var(--accent-gold);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
+        }
+
+        .nav-button:hover {
+            background: var(--secondary-love);
+            color: var(--background-dark);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 133, 192, 0.7);
+        }
+
+        /* --- BACKGROUND EFFECTS (Reused) --- */
+        .heart {
+            position: fixed; bottom: -20px; font-size: 22px; opacity: 0.25; animation: floatUp 6s linear infinite; z-index: 1; color: var(--secondary-love);
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.25; }
+            100% { transform: translateY(-120vh) translateX(30px) scale(1.6); opacity: 0; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Floating Hearts -->
+    <div id="heart-background" aria-hidden="true"></div>
+
+    <h1 class="header-title">HALL OF BEAUTY</h1>
+    <p class="subtitle">Hover kar gadhi sharma kya rahi hai </p>
+
+    <div class="collage-grid" id="collageGrid">
+        <!-- 
+            8 memory anchors (A1-A4, A6-A9) and 1 center video (A5).
+            Initial images linked to the A-set files in your assets folder.
+        -->
+        <div class="grid-item anchor" id="A1"><img id="img-A1" src="assets/A1.jpg" alt="KUCH"></div>
+        <div class="grid-item anchor" id="A2"><img id="img-A2" src="assets/A2.png" alt="NAHI"></div>
+        <div class="grid-item anchor" id="A3"><img id="img-A3" src="assets/A3.png" alt="HAI"></div>
+        
+        <div class="grid-item anchor" id="A4"><img id="img-A4" src="assets/A4.png" alt=NAHI"></div>
+        
+        <!-- Center Video: PLEASE REPLACE THE SRC WITH YOUR VIDEO URL -->
+        <div class="grid-item">
+            <video class="center-video" id="heartVideo" autoplay loop muted playsinline src="assets\VIDEO_c5265dae-3d35-42f3-9fca-65ff6bd25001.mp4" onerror="this.onerror=null; this.src='https://assets.mixkit.co/videos/preview/mixkit-glitter-dust-on-a-black-background-4712-large.mp4'">
+            </video>
+        </div>
+
+        <div class="grid-item anchor" id="A6"><img id="img-A6" src="assets/A6.png" alt="Memory Anchor 6"></div>
+        
+        <div class="grid-item anchor" id="A7"><img id="img-A7" src="assets/A7.png" alt="HAI"></div>
+        <div class="grid-item anchor" id="A8"><img id="img-A8" src="assets/A8.png" alt="KUCH"></div>
+        <div class="grid-item anchor" id="A9"><img id="img-A9" src="assets/A9.png" alt="NAHI"></div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-buttons">
+        <a href="page2.html" class="nav-button" id="prevButton">← Back to Timeline</a>
+        <a href="page4.html" class="nav-button" id="nextButton">Continue to Poetry →</a>
+    </div>
+
+
+    <script>
+        // --- 1. MEMORY DATA MAPPING ---
+        const DEFAULT_SET_ID = 'DEFAULT';
+        const imageElements = {};
+        // List of all 8 image slots (excluding the center video)
+        const slots = ['A1', 'A2', 'A3', 'A4', 'A6', 'A7', 'A8', 'A9'];
+        
+        slots.forEach(id => {
+            imageElements[id] = document.getElementById(`img-${id}`);
+        });
+
+        const memorySets = {
+            // Default set (A-set) - Visible when NOT hovering
+            [DEFAULT_SET_ID]: {
+                A1: "assets/A1.jpg",
+                A2: "assets/A2.png",
+                A3: "assets/A3.png",
+                A4: "assets/A4.png",
+                A6: "assets/A6.png",
+                A7: "assets/A7.png",
+                A8: "assets/A8.png",
+                A9: "assets/A9.png",
+            },
+            
+            // --- HOVER SETS ---
+            
+            // HOVER on A1: Swaps everything EXCEPT A1 (Uses B-set files)
+            'A1-HOVER': {
+                A2: "assets/B2.jpg",
+                A3: "assets/B3.jpg",
+                A4: "assets/B4.jpg",
+                A6: "assets/B6.jpg",
+                A7: "assets/B7.jpg",
+                A8: "assets/B8.jpg",
+                A9: "assets/B9.jpg",
+            },
+            
+            // HOVER on A2: Swaps everything EXCEPT A2 (Uses C-set files)
+            'A2-HOVER': {
+                A1: "assets/C1.png",
+                A3: "assets/C3.png",
+                A4: "assets/C4.png",
+                A6: "assets/C6.png",
+                A7: "assets/C7.png",
+                A8: "assets/C8.png",
+                A9: "assets/C9.png",
+            },
+            
+            // HOVER on A3: Swaps everything EXCEPT A3 (Uses D-set files)
+            'A3-HOVER': {
+                A1: "assets/D1.png",
+                A2: "assets/D2.png",
+                A4: "assets/D4.png",
+                A6: "assets/D6.png",
+                A7: "assets/D7.png",
+                A8: "assets/D8.png",
+                A9: "assets/D9.png",
+            },
+            
+            // HOVER on A4: Swaps everything EXCEPT A4 (Uses E-set files)
+            'A4-HOVER': {
+                A1: "assets/E1.png",
+                A2: "assets/E2.png",
+                A3: "assets/E3.png",
+                A6: "assets/E6.png",
+                A7: "assets/E7.png",
+                A8: "assets/E8.png",
+                A9: "assets/E9.png",
+            },
+
+            // HOVER on A6: Swaps everything EXCEPT A6 (Uses F-set files)
+            'A6-HOVER': {
+                A1: "assets/I1.png",
+                A2: "assets/I2.png",
+                A3: "assets/I3.png",
+                A4: "assets/I4.png",
+                A7: "assets/I7.png",
+                A8: "assets/I8.png",
+                A9: "assets/I9.png",
+            },
+
+            // HOVER on A7: Swaps everything EXCEPT A7 (Uses G-set files)
+            'A7-HOVER': {
+                A1: "assets/F1.png",
+                A2: "assets/F2.png",
+                A3: "assets/F3.png",
+                A4: "assets/F4.png",
+                A6: "assets/F6.png",
+                A7: "assets/F7.png",
+                A8: "assets/F8.png",
+                A9: "assets/F9.png",
+            },
+
+            // HOVER on A8: Swaps everything EXCEPT A8 (Uses H-set files)
+            'A8-HOVER': {
+                A1: "assets/G1.png",
+                A2: "assets/G2.png",
+                A3: "assets/G3.png",
+                // ⚠️ MISSING FILE: G4.png
+                A4: "assets/G4.png", 
+                // ⚠️ MISSING FILE: G6.png
+                A6: "assets/G6.png", 
+                A7: "assets/G7.png",
+                // ⚠️ MISSING FILE: G8.png
+                A8: "assets/G8.png", 
+                A9: "assets/G9.png", 
+            },
+
+            // HOVER on A9: Swaps everything EXCEPT A9 (Uses I-set files)
+            // Based on your final structure, I-set files are not fully visible/available, using F-set placeholders
+            // until you provide the full I-set list, but structured correctly to swap.
+            'A9-HOVER': {
+                A1: "assets/H1.jpg",
+                A2: "assets/H2.png",
+                // ⚠️ MISSING FILE: H3.png
+                A3: "assets/H3.png", 
+                A4: "assets/H4.png",
+                A6: "assets/H6.png",
+                A7: "assets/H7.png",
+                A8: "assets/H8.png",
+                // ⚠️ MISSING FILE: H9.png
+                A9: "assets/H8.png", 
+            },
+        };
+
+        // --- 2. MEMORY SWAP LOGIC (DO NOT CHANGE) ---
+
+        let swapTimeout = null;
+        let isSwapping = false;
+
+        function updateImages(hoverId, targetSetId) {
+            // Prevent multiple rapid swaps from overlapping
+            if (isSwapping) return; 
+
+            isSwapping = true;
+            const targetSet = memorySets[targetSetId];
+            
+            slots.forEach(slotId => {
+                const imgEl = imageElements[slotId];
+                
+                // Only swap the images that are NOT the anchor element itself (This is the key fix)
+                if (slotId !== hoverId) {
+                    
+                    // 1. Fade out
+                    imgEl.classList.remove('img-fading-in');
+                    imgEl.classList.add('img-fading-out');
+
+                    // 2. Change source after fade out completes (200ms)
+                    swapTimeout = setTimeout(() => {
+                        // Determine the new source (from targetSet or default)
+                        const newSrc = targetSet ? (targetSet[slotId] || memorySets[DEFAULT_SET_ID][slotId]) : memorySets[DEFAULT_SET_ID][slotId];
+                        
+                        if (newSrc) {
+                            imgEl.src = newSrc;
+                            // 3. Fade in
+                            imgEl.classList.remove('img-fading-out');
+                            imgEl.classList.add('img-fading-in');
+                        }
+                    }, 200); 
+                }
+            });
+            
+            // 4. Release the swapping lock after the full transition (200ms fade-out + 200ms delay + 300ms fade-in = 700ms total transition time)
+            // Setting the lock release to 500ms allows the next swap to start slightly before the previous fade-in finishes, enhancing smoothness.
+            setTimeout(() => {
+                 isSwapping = false;
+            }, 500); 
+        }
+
+        // --- 3. EVENT LISTENERS (DO NOT CHANGE) ---
+        const anchorElements = document.querySelectorAll('.collage-grid .anchor');
+
+        anchorElements.forEach(anchor => {
+            const anchorId = anchor.id;
+            
+            const hoverSetId = `${anchorId}-HOVER`;
+            const hasHoverSet = memorySets[hoverSetId] !== undefined;
+
+            if (hasHoverSet) {
+                // MOUSE OVER: Reveal the hidden memory layer (Target Set)
+                anchor.addEventListener('mouseover', () => {
+                    // When hovering on this anchor, use its specific hover set (e.g., A1-HOVER)
+                    updateImages(anchorId, hoverSetId);
+                });
+
+                // MOUSE OUT: Return to the default memory layer (DEFAULT Set)
+                anchor.addEventListener('mouseout', () => {
+                    // When leaving any anchor, return to default (pass null for hoverId to swap all)
+                    updateImages(null, DEFAULT_SET_ID);
+                });
+            }
+        });
+
+
+        // --- 4. NAVIGATION FIX (Canvas Environment) (DO NOT CHANGE) ---
+        document.getElementById('prevButton').addEventListener('click', function(event) {
+            event.preventDefault();
+            if (typeof __window_location_replace === 'function') {
+                __window_location_replace('page2.html');
+            } else {
+                window.location.href = 'page2.html';
+            }
+        });
+
+        document.getElementById('nextButton').addEventListener('click', function(event) {
+            event.preventDefault();
+            if (typeof __window_location_replace === 'function') {
+                __window_location_replace('page4.html');
+            } else {
+                window.location.href = 'page4.html';
+            }
+        });
+
+
+        // --- 5. BACKGROUND EFFECTS (Reused) (DO NOT CHANGE) ---
+        const heartIcons = ["💘","💝","💖","💗","💓","💞","💕"];
+        const backgroundContainer = document.getElementById("heart-background");
+        
+        function createFloatingHeart() {
+            const heart = document.createElement("div");
+            heart.classList.add("heart");
+            heart.textContent = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+            heart.style.left = Math.random() * 100 + "%";
+            heart.style.fontSize = (18 + Math.random() * 18) + "px";
+            heart.style.animationDuration = (4 + Math.random() * 4) + "s";
+            heart.style.animationDelay = (Math.random() * -6) + "s"; 
+            backgroundContainer.appendChild(heart);
+            setTimeout(() => heart.remove(), 8000); 
+        }
+
+        setInterval(createFloatingHeart, 700);
+        for(let i=0; i<15; i++) {
+            createFloatingHeart();
+        }
+
+        // --- PRE-LOADING NEXT PAGE HINT (DO NOT CHANGE) ---
+        const nextLink = document.createElement('link');
+        nextLink.rel = 'preload';
+        nextLink.href = 'page4.html';
+        nextLink.as = 'document';
+        document.head.appendChild(nextLink);
+    </script>
+</body>
+</html>

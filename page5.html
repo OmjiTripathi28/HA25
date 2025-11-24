@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Letter From My Heart</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-love: #e6007a;
+            --secondary-love: #ff85c0;
+            --accent-gold: #FFD700;
+            --background-dark: #1a0210;
+            --text-light: #fdeaf5;
+            --font-heading: 'Sacramento', cursive;
+            --font-body: 'Playfair Display', serif;
+            --font-sans: 'Montserrat', sans-serif;
+            /* Changed variable for the soft letter background */
+            --letter-soft-bg: rgba(255, 240, 245, 0.95); /* Soft Lavender Blush */
+            --text-dark: #333; /* Dark text for readability on light background */
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: var(--background-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: var(--font-body);
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        /* --- Letter Container: The "Soft Scroll" --- */
+        .letter-container {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            width: 90%;
+            height: 85vh; /* Fixed height for scrollable effect */
+            padding: 40px;
+            box-sizing: border-box;
+            /* Changed to soft background */
+            background: var(--letter-soft-bg); 
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5), 0 0 50px var(--secondary-love);
+            overflow-y: auto; /* Enable vertical scrolling */
+            text-align: left;
+            /* Changed text to dark color */
+            color: var(--text-dark); 
+            animation: slideIn 1.2s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Customize scrollbar for aesthetic */
+        .letter-container::-webkit-scrollbar { width: 8px; }
+        .letter-container::-webkit-scrollbar-thumb { background-color: var(--secondary-love); border-radius: 10px; }
+        .letter-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 10px; }
+
+        /* Letter Styling */
+        .greeting {
+            font-family: var(--font-heading);
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            /* Highlighted in Gold */
+            color: var(--accent-gold); 
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        }
+
+        .paragraph {
+            font-family: var(--font-body);
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            line-height: 1.7;
+            margin-bottom: 25px;
+            opacity: 0.9;
+            text-indent: 30px; 
+            transition: background-color 0.3s ease; 
+        }
+        
+        /* --- HIDDEN INK STYLES (MATCHES SOFT BG) --- */
+        .hidden-ink {
+            /* Text color nearly matches the soft letter background */
+            color: var(--letter-soft-bg); 
+            transition: color 0.5s ease, text-shadow 0.5s ease;
+            cursor: pointer;
+            font-family: var(--font-heading); 
+            font-size: 1.1em; 
+            font-weight: bold;
+        }
+
+        /* Reveal the text when the mouse hovers over the parent paragraph */
+        .paragraph:hover .hidden-ink {
+            color: var(--primary-love); /* Reveal color: Vibrant Pink */
+            text-shadow: 0 0 8px rgba(230, 0, 122, 0.4);
+        }
+        
+        /* Signature and Sign-off */
+        .closing {
+            margin-top: 40px;
+            padding-top: 20px;
+            /* Dark dashed divider for light background */
+            border-top: 1px dashed rgba(0, 0, 0, 0.2); 
+            font-family: var(--font-body);
+            font-size: 1.2rem;
+            position: relative; 
+            display: inline-block;
+            cursor: default;
+            color: var(--text-dark);
+        }
+
+        .signature {
+            font-family: var(--font-heading);
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            color: var(--primary-love);
+            margin-top: 10px;
+        }
+        
+        /* --- SECRET HOVER MESSAGE --- */
+        .secret-message {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--primary-love);
+            background: var(--accent-gold);
+            padding: 5px 10px;
+            border-radius: 10px;
+            opacity: 0;
+            transition: all 0.5s ease-out;
+            white-space: nowrap;
+            pointer-events: none; 
+        }
+
+        .closing:hover .secret-message {
+            opacity: 1;
+            top: -40px; /* Float up slightly */
+        }
+
+        /* Next Page Button (Sits below the letter container) */
+        .nav-button-wrapper {
+            position: absolute;
+            bottom: 20px;
+            z-index: 20;
+            width: 100%;
+            left: 0;
+            text-align: center;
+        }
+
+        .nav-button {
+            display: inline-block;
+            padding: 12px 30px;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            color: var(--background-dark);
+            background: var(--accent-gold);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
+        }
+
+        .nav-button:hover {
+            background: var(--secondary-love);
+            color: var(--background-dark);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 133, 192, 0.7);
+        }
+
+        /* Floating Hearts Background (Reused from Page 1) */
+        .heart {
+            position: fixed;
+            bottom: -20px;
+            font-size: 22px;
+            opacity: 0.25;
+            animation: floatUp 6s linear infinite;
+            z-index: 1;
+            color: var(--secondary-love);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.25; }
+            100% { transform: translateY(-120vh) translateX(30px) scale(1.6); opacity: 0; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .letter-container {
+                padding: 30px 20px;
+                height: 90vh; 
+            }
+            .greeting, .signature {
+                font-size: 3rem;
+            }
+            .paragraph {
+                font-size: 1rem;
+            }
+            .nav-button-wrapper {
+                bottom: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Floating Hearts -->
+    <div id="heart-background" aria-hidden="true"></div>
+
+    <div class="letter-container">
+        <!-- TTS Button was removed as requested -->
+
+        <p class="greeting">My Love, Taanya Nigam</p>
+
+        <!-- --- Letter Body Starts Here (Placeholder Content - Edit Me!) --- -->
+        
+        <p class="paragraph">
+I still remember that night before our day,
+When 23rd November slowly made its way.
+I planned to tell you what my heart already knew,
+That this time maybe… just maybe… you'd say “I love you too.”
+Sleep didn’t come, my mind was running wild,
+Like a scared lover and an excited child.
+“How do I propose? What if she says no?”
+“Ghar jaa raha hu pehli baar… weird toh nahi hoga na?” — all in one flow.
+And haa, bhai, ₹5 ki Dairy Milk laya tha mai,
+Aaj bhi sochta hu — kya hi dimag tha us din.
+Upar se tu time hi le rahi thi bulane me,
+Aur mai wahi khada, confused apne dil ke bahane me.
+Phir jab aaya… gate pe hi saans ruk gayi,
+That hoodie on you — maan, meri duniya hi thak gayi.
+You looked so perfect, it almost felt unreal,
+Mera bechara dil toh wahi pe girne wala tha — that’s how I feel.
+Hum dono awkward khade, hawa bhi sharmati thi,
+Mai tere kaan ke peeche zulfen daalun — tu piche hat jaati thi.
+(Gadhiiii……)
+And then came the line, simple yet true
+The trembling whisper, “I love you.”
+Thoda drama, thodi sharm, thoda rona,thodi hasi,
+fir tune “haa” kaha — and the world paused for me.
+Your kisses after that… the softness, the bliss,
+That moment became our life’s first kiss.
+A kiss that said more than words ever could,
+A beginning — pure, beautiful, and understood.
+        </p>
+        
+        <p class="paragraph">
+            Your laughter lifts me like a morning breeze, 
+Your gentle heart understands me so true. 
+Your faith in me brings calm and endless ease, 
+And makes me stronger in all that I do. 
+You guide my soul without a single plea, 
+Not by demands, but by the light you bring. 
+You make me want to be the best of me, 
+Just by existing — my forever spring. 
+You are the piece I never knew I’d miss, 
+A love I searched for without even knowing. 
+Yet you arrived, soft as a whispered kiss, 
+And filled my empty spaces without showing.
+<span class="hidden-ink">You are so much more than dreams I adore, 
+A truth my heart had quietly waited for.</span>
+        </p>
+        
+        
+
+        <p class="paragraph">
+            I know I promised I’d keep you smiling wide,
+Yet sometimes I’ve failed, let shadows slip inside.
+I’ve held onto your mistakes more than I should,
+Let insecurity speak louder than the good.
+
+I’ve been possessive, scared, and far too tight,
+Trying to hold you close with all my might.
+I’ve tried to control, to dominate your way—
+(Bed pe toh obviously karunga someday…)
+
+But look once, love, straight into my eyes,
+You’ll see the fear beneath my stubborn lies.
+I’m terrified of losing you to someone new,
+’Cause it took the universe so long to bring me you.
+
+It hurts to think of you drifting far apart,
+But I also know—your life is yours to chart.
+You deserve freedom, choices, days of your own,
+And I must trust the love you’ve always shown.
+
+So I’ll change myself instead of changing you,
+Grow steadier, softer, more patient and true.
+I’ll love you deeper through every passing day—
+And by our next anniversary, I swear,
+you won’t have a single complaint left to say.
+        </p>
+        
+        <!-- --- Letter Body Ends Here --- -->
+
+        <div class="closing" id="closingBlock">
+            Forever and always yours,
+            <!-- Secret Message on Hover -->
+            <span class="secret-message">FUCK YOU 😉</span>
+            <p class="signature">JANGLA BILLA😺</p>
+        </div>
+    </div>
+
+    <!-- The navigation button is placed outside the scrolling container -->
+    <div class="nav-button-wrapper">
+        <a href="page6.html" class="nav-button">CHAL AAGE BADH!</a>
+    </div>
+
+    <script>
+        // --- FLOATING HEARTS BACKGROUND LOGIC ---
+        const heartIcons = ["💘","💝","💖","💗","💓","💞","💕"];
+        const backgroundContainer = document.getElementById("heart-background");
+        
+        function createFloatingHeart() {
+            const heart = document.createElement("div");
+            heart.classList.add("heart");
+            heart.textContent = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+            heart.style.left = Math.random() * 100 + "%";
+            heart.style.fontSize = (18 + Math.random() * 18) + "px";
+            heart.style.animationDuration = (4 + Math.random() * 4) + "s";
+            heart.style.animationDelay = (Math.random() * -6) + "s"; // Start them staggered
+            backgroundContainer.appendChild(heart);
+            // Remove after animation completes to prevent memory leak
+            setTimeout(() => heart.remove(), 8000); 
+        }
+
+        // Generate a constant stream of hearts
+        setInterval(createFloatingHeart, 700);
+        // Initial burst of hearts on load
+        for(let i=0; i<15; i++) {
+            createFloatingHeart();
+        }
+
+        // --- PRE-LOADING NEXT PAGE HINT (to smooth the transition) ---
+        const nextLink = document.createElement('link');
+        nextLink.rel = 'preload';
+        nextLink.href = 'page6.html';
+        nextLink.as = 'document';
+        document.head.appendChild(nextLink);
+    </script>
+</body>
+</html>

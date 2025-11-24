@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Poem For You, My Love</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-love: #e6007a;
+            --secondary-love: #ff85c0;
+            --accent-gold: #FFD700;
+            --background-dark: #1a0210;
+            --text-light: #fdeaf5;
+            --font-heading: 'Sacramento', cursive;
+            --font-body: 'Playfair Display', serif;
+            --font-sans: 'Montserrat', sans-serif;
+            --transition-duration: 0.5s;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: var(--background-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: var(--font-body);
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        /* Full-page container for dark aesthetic */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 90%;
+            width: 700px;
+            padding: 40px 20px;
+            /* Glassmorphism style for the poem box */
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3), 0 0 30px var(--primary-love);
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Title Style - Elegant Script */
+        .title {
+            font-family: var(--font-heading);
+            font-size: clamp(3rem, 7vw, 5rem);
+            color: var(--accent-gold);
+            margin-bottom: 25px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            line-height: 1.1;
+        }
+
+        /* Poem Content Box - Now uses Cursive Handwriting Font */
+        .poem-content {
+            font-family: var(--font-heading); /* Cursive font for handwriting effect */
+            font-size: clamp(1.5rem, 4vw, 2.5rem); /* Increased size for readability */
+            line-height: 1.5;
+            padding: 20px;
+            margin-bottom: 30px;
+            opacity: 0; /* Starts hidden for the typewriter effect */
+            text-align: center; /* Center the text */
+            min-height: 200px; /* Ensure space for content even when empty */
+            transition: opacity 0.5s;
+        }
+
+        /* Typing Cursor Effect */
+        /* Shows cursor only if the 'finished-typing' class is NOT present */
+        .poem-content:not(.finished-typing)::after {
+            content: '_'; /* Use underscore or pipe for a better cursor feel */
+            display: inline-block;
+            margin-left: 5px;
+            color: var(--secondary-love);
+            animation: blink 0.7s step-end infinite;
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        @keyframes blink {
+            from, to { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* Next Page Button */
+        .nav-button {
+            display: inline-block;
+            padding: 12px 30px;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            color: var(--background-dark);
+            background: var(--secondary-love);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 133, 192, 0.5);
+            opacity: 0; /* Starts hidden */
+            pointer-events: none;
+        }
+
+        .nav-button.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transition: opacity 1s ease 0.2s, transform 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: var(--accent-gold);
+            color: var(--background-dark);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+        }
+
+        /* Floating Hearts Background (Reused from Page 1) */
+        .heart {
+            position: fixed;
+            bottom: -20px;
+            font-size: 22px;
+            opacity: 0.25;
+            animation: floatUp 6s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.25; }
+            100% { transform: translateY(-120vh) translateX(30px) scale(1.6); opacity: 0; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 15px;
+            }
+            .title {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Floating Hearts -->
+    <div id="heart-background" aria-hidden="true"></div>
+
+    <div class="container">
+        <div class="title">My Constellation</div>
+
+        <div class="poem-content" id="poemText">
+            <!-- Poem will be written live by JavaScript -->
+        </div>
+        
+        <a href="page5.html" class="nav-button" id="navButton">Read the Letter</a>
+    </div>
+
+    <script>
+        // --- POEM CONTENT ---
+        const poem = 
+`You are the quietest part of my world,
+The soft, true sound beneath the noise.
+Before you the sky was merely bright;
+Now it holds the blueprint of our light.
+
+Every calendar page, a whispered vow,
+Every shared glance, a lesson in how
+Two separate lives can weave into one thread,
+A narrative only our souls have read.
+
+We count the days and watch the minutes spin,
+But time is only where our love begins.
+It’s in the pause, the touch, the knowing smile,
+That we reside, for longer than a while.
+
+So let the clock mark years and months and suns,
+Our beautiful, quiet story still runs.
+To the woman who turned my world to gold,
+A thousand years are not enough to hold.
+— With all my love, always.`;
+
+
+        // --- TYPEWRITER EFFECT LOGIC ---
+        const poemElement = document.getElementById('poemText');
+        const navButton = document.getElementById('navButton');
+        const typingSpeed = 90; // milliseconds per character
+
+        function typeWriter(text, i) {
+            if (i < text.length) {
+                let char = text.charAt(i);
+                
+                if (char === '\n') {
+                    // Use <br> for line breaks
+                    poemElement.innerHTML += '<br>';
+                } else {
+                    // Add character
+                    poemElement.textContent += char;
+                }
+
+                setTimeout(() => {
+                    typeWriter(text, i + 1);
+                }, typingSpeed);
+            } else {
+                // Typing finished
+                poemElement.classList.add('finished-typing');
+                // Show the navigation button
+                setTimeout(() => {
+                    navButton.classList.add('visible');
+                }, 500); 
+            }
+        }
+
+        // Start typing after a brief delay
+        setTimeout(() => {
+            poemElement.style.opacity = 1; // Make the container visible
+            typeWriter(poem, 0);
+        }, 800); 
+
+
+        // --- FLOATING HEARTS BACKGROUND LOGIC ---
+        const heartIcons = ["💘","💝","💖","💗","💓","💞","💕"];
+        const backgroundContainer = document.getElementById("heart-background");
+        
+        function createFloatingHeart() {
+            const heart = document.createElement("div");
+            heart.classList.add("heart");
+            heart.textContent = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+            heart.style.left = Math.random() * 100 + "%";
+            heart.style.fontSize = (18 + Math.random() * 18) + "px";
+            heart.style.animationDuration = (4 + Math.random() * 4) + "s";
+            heart.style.animationDelay = (Math.random() * -6) + "s"; // Start them staggered
+            backgroundContainer.appendChild(heart);
+            // Remove after animation completes to prevent memory leak
+            setTimeout(() => heart.remove(), 8000); 
+        }
+
+        // Generate a constant stream of hearts
+        setInterval(createFloatingHeart, 700);
+        // Initial burst of hearts on load
+        for(let i=0; i<15; i++) {
+            createFloatingHeart();
+        }
+
+        // --- PRE-LOADING NEXT PAGE HINT (to smooth the transition) ---
+        const nextLink = document.createElement('link');
+        nextLink.rel = 'preload';
+        nextLink.href = 'page5.html';
+        nextLink.as = 'document';
+        document.head.appendChild(nextLink);
+    </script>
+</body>
+</html>

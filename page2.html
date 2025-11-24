@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Time Together — Fullscreen Snap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:wght@400;700&family=Sacramento&display=swap" rel="stylesheet">
+  
+  <style>
+    :root{
+      --primary-love: #e6007a;
+      --secondary-love: #ff85c0;
+      --accent-gold: #FFD700;
+      --background-dark: #1a0210;
+      --text-light: #fdeaf5;
+      --font-heading: 'Sacramento', cursive;
+      --font-body: 'Playfair Display', serif;
+      --font-sans: 'Montserrat', sans-serif;
+    }
+
+    html,body{height:100%;margin:0;background:var(--background-dark);color:var(--text-light);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+
+    .scroller{
+      height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth;
+    }
+    .section{
+      height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;scroll-snap-align:center;position:relative;padding:40px;text-align:center;box-sizing:border-box
+    }
+
+    .bg-tex{position:fixed;inset:0;opacity:0.035;background-image:url('/mnt/data/625660ba-64cc-4f2e-8f34-d0975ff829ad.png');background-size:cover;background-position:center;filter:grayscale(40%) blur(2px);pointer-events:none}
+
+    .num{font-family:var(--font-body);font-size:clamp(48px,9vw,120px);font-weight:700;margin:0;opacity:0;transform:translateY(10px) scale(0.98);transition:all 700ms cubic-bezier(.2,.9,.2,1);letter-spacing:1px}
+    .num.visible{opacity:1;transform:translateY(0) scale(1)}
+
+    .label{font-family:var(--font-heading);font-size:clamp(20px,4vw,36px);color:var(--secondary-love);margin:0}
+
+    .msg{font-family:var(--font-body);font-size:18px;opacity:0;transform:translateY(6px);transition:opacity 600ms ease, transform 600ms ease;color:var(--text-light);max-width:780px}
+    .msg.visible{opacity:1;transform:translateY(0)}
+
+    .hint{position:absolute;bottom:28px;font-size:14px;opacity:0.6}
+
+    .section:nth-child(odd){background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)}
+    .section .decor-heart{position:absolute;right:10%;top:12%;font-size:36px;opacity:0.06}
+
+    .particles{position:absolute;inset:0;pointer-events:none;z-index:0}
+    .particle{position:absolute;font-size:18px;opacity:0.08;transform:translateY(0)}
+
+    @media (max-width:640px){
+      .msg{font-size:16px;padding:0 20px}
+      .label{font-size:28px}
+    }
+
+    /* -------------------------------------- */
+    /*    ✨ UPDATED BUTTON ANIMATION CSS ✨   */
+    /* -------------------------------------- */
+
+    .nav-button-wrapper {
+        position: absolute;
+        bottom: 40px;
+        width: 100%;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(40px);
+        pointer-events: none;
+        transition: opacity 1s ease, transform 1s ease;
+        z-index: 20;
+    }
+
+    .nav-button-wrapper.show {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        animation: pulseGlow 2.2s infinite ease-in-out;
+    }
+
+    /* subtle gold glowing + pulse */
+    @keyframes pulseGlow {
+      0% {
+        transform: translateY(0) scale(1);
+        filter: drop-shadow(0 0 6px rgba(255,215,0,0.6));
+      }
+      50% {
+        transform: translateY(0) scale(1.06);
+        filter: drop-shadow(0 0 14px rgba(255,215,0,0.9));
+      }
+      100% {
+        transform: translateY(0) scale(1);
+        filter: drop-shadow(0 0 6px rgba(255,215,0,0.6));
+      }
+    }
+
+    .nav-button {
+        display: inline-block;
+        padding: 12px 30px;
+        font-family: var(--font-sans);
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        color: var(--background-dark);
+        background: var(--accent-gold);
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
+    }
+
+    .nav-button:hover {
+        background: var(--secondary-love);
+        color: var(--background-dark);
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 6px 20px rgba(255, 133, 192, 0.7);
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="bg-tex" aria-hidden="true"></div>
+
+<div class="scroller" id="scroller">
+
+    <!-- Years -->
+    <section class="section" data-type="years">
+      <div class="particles"></div>
+      <h1 class="num" id="num-years">0</h1>
+      <div class="label">Years</div>
+      <div class="msg" id="msg-years">passed jhelling each other.</div>
+      <div class="hint">Scroll ↓</div>
+    </section>
+
+    <!-- Months -->
+    <section class="section" data-type="months">
+      <div class="particles"></div>
+      <h1 class="num" id="num-months">0</h1>
+      <div class="label">Months</div>
+      <div class="msg" id="msg-months">every month was a festival with you pucho</div>
+    </section>
+
+    <!-- Weeks -->
+    <section class="section" data-type="weeks">
+      <div class="particles"></div>
+      <h1 class="num" id="num-weeks">0</h1>
+      <div class="label">Weeks</div>
+      <div class="msg" id="msg-weeks">of seeing or not seeing each other (hehe).</div>
+    </section>
+
+    <!-- Days -->
+    <section class="section" data-type="days">
+      <div class="particles"></div>
+      <h1 class="num" id="num-days">0</h1>
+      <div class="label">Days</div>
+      <div class="msg" id="msg-days">fuck..another day of falling in love with same beautiful girl.</div>
+    </section>
+
+    <!-- Hours -->
+    <section class="section" data-type="hours">
+      <div class="particles"></div>
+      <h1 class="num" id="num-hours">0</h1>
+      <div class="label">Hours</div>
+      <div class="msg" id="msg-hours">of nonsence bakbak with you .</div>
+    </section>
+
+    <!-- Minutes -->
+    <section class="section" data-type="minutes">
+      <div class="particles"></div>
+      <h1 class="num" id="num-minutes">0</h1>
+      <div class="label">Minutes</div>
+      <div class="msg" id="msg-minutes">of being offline without telling (solly na).</div>
+    </section>
+
+    <!-- Seconds -->
+    <section class="section" data-type="seconds">
+      <div class="particles"></div>
+      <h1 class="num" id="num-seconds">0</h1>
+      <div class="label">Seconds</div>
+      <div class="msg" id="msg-seconds">of TOGETHERNESS and adding till ♾️...</div>
+    </section>
+
+    <div class="nav-button-wrapper">
+        <a href="page3.html" class="nav-button">See What's Next!</a>
+    </div>
+
+</div>
+
+
+<script>
+
+const START = new Date('Nov 24, 2021 00:00:00');
+
+function computeTotals(){
+  const now = new Date();
+  const diffMs = now - START;
+  const totalSeconds = Math.floor(diffMs / 1000);
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const totalHours = Math.floor(totalMinutes / 60);
+  const totalDays = Math.floor(totalHours / 24);
+  const totalWeeks = Math.floor(totalDays / 7);
+
+  let years = now.getFullYear() - START.getFullYear();
+  let months = now.getMonth() - START.getMonth();
+  let dayDiff = now.getDate() - START.getDate();
+  if (dayDiff < 0) { months -= 1; }
+  if (months < 0) { years -= 1; months += 12; }
+  const totalMonths = years * 12 + months;
+
+  return {
+    years: Math.max(0, years),
+    months: Math.max(0, totalMonths),
+    weeks: Math.max(0, totalWeeks),
+    days: Math.max(0, totalDays),
+    hours: Math.max(0, totalHours),
+    minutes: Math.max(0, totalMinutes),
+    seconds: Math.max(0, totalSeconds)
+  }
+}
+
+function animateNumber(el, end, duration = 800){
+  const start = 0;
+  const range = end - start;
+  let startTime = null;
+  function step(timestamp){
+    if(!startTime) startTime = timestamp;
+    const progress = Math.min((timestamp - startTime) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.floor(start + range * eased);
+    el.textContent = current.toLocaleString();
+    if(progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+const sections = document.querySelectorAll('.section');
+let liveSecondInterval = null;
+const navBtn = document.querySelector('.nav-button-wrapper');
+
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    const sec = entry.target;
+    const numEl = sec.querySelector('.num');
+    const msgEl = sec.querySelector('.msg');
+    const type = sec.dataset.type;
+
+    if(entry.isIntersecting){
+
+      if(type === "seconds"){
+        navBtn.classList.add("show");
+      }
+
+      const totals = computeTotals();
+
+      if(type === 'seconds'){
+        numEl.textContent = totals.seconds.toLocaleString();
+        msgEl.classList.add('visible');
+        numEl.classList.add('visible');
+
+        if(liveSecondInterval) clearInterval(liveSecondInterval);
+        liveSecondInterval = setInterval(()=>{
+          const t = computeTotals();
+          numEl.textContent = t.seconds.toLocaleString();
+        },1000);
+
+      } else {
+        const value = totals[type];
+        animateNumber(numEl, value, 900);
+        setTimeout(()=>{ msgEl.classList.add('visible'); numEl.classList.add('visible'); }, 220);
+      }
+
+      spawnSectionParticles(sec);
+
+    } else {
+
+      if(type === "seconds"){
+        navBtn.classList.remove("show");
+      }
+
+      numEl.classList.remove('visible');
+      msgEl.classList.remove('visible');
+
+      if(type === 'seconds' && liveSecondInterval){
+        clearInterval(liveSecondInterval);
+        liveSecondInterval = null;
+      }
+    }
+
+  });
+},{root:null,threshold:0.6});
+
+sections.forEach(s=>io.observe(s));
+
+function spawnSectionParticles(section){
+  const icons = ['💘','💖','💗','💕'];
+  const container = section.querySelector('.particles');
+  for(let i=0;i<6;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.textContent = icons[Math.floor(Math.random()*icons.length)];
+    p.style.left = (10 + Math.random()*80) + '%';
+    p.style.top = (10 + Math.random()*70) + '%';
+    p.style.fontSize = (10 + Math.random()*26) + 'px';
+    p.style.opacity = (0.04 + Math.random()*0.08).toFixed(2);
+    const dur = 2000 + Math.random()*1600;
+    p.animate([{transform:'translateY(0) scale(.8)',opacity:p.style.opacity},{transform:'translateY(-60px) scale(1.2)',opacity:0}],{duration:dur,easing:'cubic-bezier(.2,.9,.2,1)'});
+    container.appendChild(p);
+    setTimeout(()=> p.remove(), dur+60);
+  }
+}
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'ArrowDown' || e.key === 'PageDown') { window.scrollBy({top: window.innerHeight, behavior:'smooth'}); }
+  if(e.key === 'ArrowUp' || e.key === 'PageUp') { window.scrollBy({top: -window.innerHeight, behavior:'smooth'}); }
+});
+
+window.scrollTo(0,0);
+
+</script>
+
+</body>
+</html>

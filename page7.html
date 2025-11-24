@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Secret Glace</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-love: #e6007a;
+            --secondary-love: #ff85c0;
+            --accent-gold: #FFD700;
+            --background-dark: #05000d; /* Near pure black */
+            --text-light: #fdeaf5;
+            --moon-light: #FFFFFF; /* Bright white for silver effects */
+            --silver-glow: #A0D0FF; /* Soft blue-silver glow */
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: var(--background-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Playfair Display', serif; /* Default serious font */
+            color: var(--text-light);
+            text-align: center;
+            /* Deeper, more serious background gradient */
+            background-image: radial-gradient(circle at center, #100020 0%, var(--background-dark) 100%);
+            position: relative; 
+        }
+        
+        /* --- FULL MOON EFFECT (Static Background) --- */
+        .full-moon {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: var(--moon-light);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Subtle, cool moon glow */
+            box-shadow: 0 0 100px 50px rgba(255, 255, 255, 0.05), 0 0 150px 80px rgba(255, 255, 255, 0.02);
+            z-index: 5;
+            opacity: 0.05; 
+        }
+
+        /* --- STATIC GLITTERING STARS --- */
+        #glitter-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--text-light);
+            border-radius: 50%;
+            opacity: 0.8;
+            /* Twinkling effect */
+            animation: glitter 1.5s linear infinite alternate;
+        }
+        
+        @keyframes glitter {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 0.9; transform: scale(1.2); }
+            100% { opacity: 0.6; transform: scale(1); }
+        }
+
+        /* --- JOKE BOX (Silver Glassmorphism) --- */
+        .joke-box {
+            position: relative; 
+            z-index: 15; /* Above the moon and stars */
+            padding: 50px 40px;
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            /* Changed glow from pink/gold to silver-blue */
+            box-shadow: 0 0 30px rgba(160, 208, 255, 0.4), 0 0 15px var(--silver-glow); 
+            max-width: 90%;
+            animation: pulseSilverBox 4s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulseSilverBox {
+            0% { box-shadow: 0 0 30px rgba(160, 208, 255, 0.4); }
+            100% { box-shadow: 0 0 60px rgba(160, 208, 255, 0.8); }
+        }
+
+        .joke-text {
+            font-family: 'Playfair Display', serif; /* Changed to serious font */
+            font-size: clamp(3rem, 8vw, 6rem); /* Adjusted size */
+            font-weight: 700;
+            color: var(--silver-glow); /* Changed to silver */
+            margin: 0 0 10px 0;
+            /* Silver glow effect */
+            text-shadow: 0 0 15px rgba(160, 208, 255, 0.9); 
+            animation: textReveal 1.5s ease-out;
+            line-height: 1.1;
+        }
+        
+        @keyframes textReveal {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            color: var(--text-light);
+            font-weight: 400;
+            margin-bottom: 40px;
+        }
+
+        /* Back Button - Dark text on Silver background */
+        .back-button {
+            display: inline-block;
+            padding: 12px 30px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            color: var(--background-dark); /* Dark text */
+            background: var(--silver-glow); /* Silver background */
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(160, 208, 255, 0.7);
+        }
+
+        .back-button:hover {
+            background: var(--moon-light); /* Brighter white on hover */
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.8);
+        }
+
+        @media (max-width: 600px) {
+            .joke-box {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Moon Shape -->
+    <div class="full-moon"></div>
+
+    <!-- Background effects: Static glittering stars -->
+    <div id="glitter-container" aria-hidden="true"></div>
+
+    <div class="joke-box">
+        <p class="subtitle"></p>
+        <h1 class="joke-text">ITNI BHI KYA JALDI HAI</h1>
+        <p class="subtitle">(HUTT)</p>
+        
+        <!-- Fix for internal navigation within the Canvas environment -->
+        <a href="page6.html" class="back-button" id="backButton">BACK</a>
+    </div>
+
+    <script>
+        // --- STATIC GLITTER GENERATOR ---
+        const glitterContainer = document.getElementById('glitter-container');
+        const numStars = 200; 
+
+        function createStaticGlitter() {
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement("div");
+                star.classList.add("star");
+                
+                // Random position across the entire screen
+                star.style.left = Math.random() * 100 + "%";
+                star.style.top = Math.random() * 100 + "%";
+                
+                // Randomize size and animation delay for non-uniform twinkling
+                const size = 1 + Math.random() * 2;
+                star.style.width = size + "px";
+                star.style.height = size + "px";
+                star.style.animationDelay = (Math.random() * 1.5) + "s"; // Delay for staggered start
+                star.style.animationDuration = (1 + Math.random() * 1.5) + "s"; // Different speed
+
+                glitterContainer.appendChild(star);
+            }
+        }
+        
+        // Generate stars on load
+        createStaticGlitter();
+        
+        // Fix for internal navigation within the Canvas environment (Using the ID for the link)
+        document.getElementById('backButton').addEventListener('click', function(event) {
+            event.preventDefault(); 
+            if (typeof __window_location_replace === 'function') {
+                // Pass the destination URL defined in the href attribute
+                __window_location_replace(this.getAttribute('href'));
+            } else {
+                window.location.href = this.getAttribute('href');
+            }
+        });
+    </script>
+</body>
+</html>
