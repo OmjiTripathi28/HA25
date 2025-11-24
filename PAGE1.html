@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Anniversary Countdown</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-love: #e6007a;
+            --secondary-love: #ff85c0;
+            --accent-gold: #FFD700;
+            --background-dark: #1a0210;
+            --text-light: #fdeaf5;
+            --font-heading: 'Sacramento', cursive;
+            --font-body: 'Playfair Display', serif;
+            --font-sans: 'Montserrat', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: var(--background-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: var(--font-sans);
+            color: var(--text-light);
+            position: relative; /* For fixed background elements */
+        }
+
+        /* Floating Hearts Background */
+        .heart {
+            position: fixed;
+            bottom: -20px;
+            font-size: 22px;
+            opacity: 0.25;
+            animation: floatUp 6s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% { 
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0.25;
+            }
+            100% { 
+                transform: translateY(-120vh) translateX(30px) scale(1.6);
+                opacity: 0;
+            }
+        }
+
+        /* Sparkles */
+        .sparkle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: white;
+            opacity: 0.4;
+            border-radius: 50%;
+            animation: sparkleFloat 3s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes sparkleFloat {
+             0%, 100% { transform: translateY(0); opacity: 0.4; }
+             50% { transform: translateY(-10px); opacity: 0.7; }
+        }
+
+        /* Soft particles background */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--secondary-love);
+            border-radius: 50%;
+            opacity: 0.6;
+            filter: blur(4px);
+            animation: floatUpParticle linear infinite;
+        }
+
+        @keyframes floatUpParticle {
+            from { transform: translateY(0) scale(1); }
+            to { transform: translateY(-120vh) scale(1.3); }
+        }
+
+        /* Countdown container */
+        .countdown-box {
+            text-align: center;
+            padding: 40px 60px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 25px rgba(255, 0, 120, 0.4);
+            animation: pulseBox 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes pulseBox {
+            0%,100% { box-shadow: 0 0 20px rgba(255,0,120,0.3); }
+            50% { box-shadow: 0 0 40px rgba(255,0,150,0.6); }
+        }
+
+        .heading {
+            font-family: var(--font-heading);
+            font-size: 60px;
+            margin-bottom: 10px;
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px rgba(255,215,0,0.6);
+            animation: glowText 2s ease-in-out infinite;
+        }
+
+        @keyframes glowText {
+            0%,100% { text-shadow: 0 0 10px rgba(255,215,0,0.4); }
+            50% { text-shadow: 0 0 25px rgba(255,215,0,1); }
+        }
+
+        .time {
+            font-size: 26px;
+            font-family: var(--font-body);
+            margin-top: 15px;
+        }
+
+        /* --- Magical Transition Screen (Now hosts the burst) --- */
+        .transition-screen {
+            position: fixed;
+            inset: 0;
+            background: black;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: var(--text-light);
+            font-family: var(--font-body);
+            z-index: 100; /* Ensure it's on top */
+        }
+
+        .transition-message {
+            font-size: 38px;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+            z-index: 102;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* --- Explosion Particle Styles (Enhanced Impact) --- */
+        .explosion-item {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0;
+            /* Faster initial speed, covering more ground */
+            animation: explode 2.5s cubic-bezier(0.1, 0.7, 0.5, 1.2) forwards; 
+        }
+
+        @keyframes explode {
+            0% { transform: scale(0.2) translate(0, 0); opacity: 1; }
+            10% { opacity: 1; }
+            100% { 
+                /* Increased spread across the screen */
+                transform: scale(1.5) translate(var(--x), var(--y)); 
+                opacity: 0; 
+            }
+        }
+        
+        /* Gold Flash Effect */
+        .gold-flash {
+            position: fixed;
+            inset: 0;
+            background: var(--accent-gold);
+            opacity: 0;
+            z-index: 101;
+            animation: flashOut 0.5s ease-out;
+        }
+        
+        @keyframes flashOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .heading {
+                font-size: 40px;
+            }
+            .time {
+                font-size: 22px;
+            }
+            .countdown-box {
+                padding: 30px 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="particles" id="particles"></div>
+    <!-- Floating heart background is handled by JS -->
+
+    <div class="countdown-box">
+        <div class="heading">Our Day is Coming ❤️</div>
+        <div class="time" id="countdown">Loading...</div>
+    </div>
+
+    <!-- Transition Screen is initially hidden -->
+    <div class="transition-screen" id="transitionScreen">
+        <!-- Gold Flash element will be inserted here temporarily -->
+        <div class="transition-message">Our journey continues, my love… ❤️</div>
+    </div>
+
+    <script>
+        // --- BACKGROUND EFFECTS ---
+
+        /* Floating Hearts Generator */
+        const heartIcons = ["💘","💝","💖","💗","💓","💞","💕"];
+        setInterval(() => {
+            const heart = document.createElement("div");
+            heart.classList.add("heart");
+            heart.textContent = heartIcons[Math.floor(Math.random()*heartIcons.length)];
+            heart.style.left = Math.random()*100 + "%";
+            heart.style.fontSize = (20 + Math.random()*20) + "px";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }, 600);
+
+        /* Soft Sparkles */
+        setInterval(() => {
+            const sp = document.createElement("div");
+            sp.classList.add("sparkle");
+            sp.style.left = Math.random()*100 + "%";
+            sp.style.top = Math.random()*100 + "%";
+            document.body.appendChild(sp);
+            setTimeout(()=> sp.remove(), 3000);
+        }, 450);
+
+
+        /* Generate particle hearts */
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 25; i++) {
+                let p = document.createElement('div');
+                p.classList.add('particle');
+                let size = Math.random() * 10 + 6;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.bottom = '-20px';
+                p.style.animationDuration = (Math.random() * 6 + 6) + 's';
+                container.appendChild(p);
+            }
+        }
+        createParticles();
+
+        // --- COUNTDOWN LOGIC ---
+
+        const countdownElement = document.getElementById("countdown");
+        // Target date used from your initial code
+        const targetDate = new Date("Nov 24, 2025 11:44:00").getTime();
+
+        const timer = setInterval(() => {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                clearInterval(timer);
+                countdownElement.textContent = "It's time! ♥️";
+                triggerTransition();
+                return;
+            }
+
+            let d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            let h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            let s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            countdownElement.textContent = `${d} Days : ${h} Hours : ${m} Mins : ${s} Secs`;
+        }, 1000);
+
+        // --- MAGICAL TRANSITION & EXPLOSION LOGIC → Page 2 ---
+        
+        function triggerTransition() {
+            const screen = document.getElementById("transitionScreen");
+            const countdownBox = document.querySelector('.countdown-box');
+            
+            // 1. Reveal the transition screen
+            screen.style.opacity = 1;
+            screen.style.pointerEvents = "all";
+            
+            // 2. Hide the countdown box immediately to reveal the burst center
+            countdownBox.style.opacity = 0;
+
+            // 3. Trigger the burst effect from the center of the screen
+            generateCosmicBurst(screen);
+            
+            // 4. Trigger the brief gold flash
+            const flash = document.createElement('div');
+            flash.classList.add('gold-flash');
+            screen.appendChild(flash);
+
+
+            // 5. Navigate to the next page after the explosion animation finishes
+            setTimeout(() => {
+                if (typeof __window_location_replace === 'function') {
+                    __window_location_replace('page2.html');
+                } else {
+                    window.location.href = 'page2.html';
+                }
+            }, 3000); // 3 seconds to let the explosion unfold
+        }
+
+        /* Generate the burst particles (Hearts, Stars, Confetti) */
+        function generateCosmicBurst(container) {
+            // Increased variety and count for more impact
+            const burstItems = ["❤️", "⭐", "✨", "💖", "🌟", " confetti", " confetti-lg"];
+            const colors = ['#ff006e', '#FFD700', '#ffffff', '#ff85c0'];
+            const numItems = 150; // Increased count
+
+            for (let i = 0; i < numItems; i++) {
+                const item = document.createElement("div");
+                item.classList.add("explosion-item");
+                
+                // Random item type
+                let content = burstItems[Math.floor(Math.random() * burstItems.length)];
+                
+                if (content.startsWith(" confetti")) {
+                    // Create a small colored square for confetti effect
+                    item.style.width = content === " confetti-lg" ? '10px' : '6px';
+                    item.style.height = content === " confetti-lg" ? '10px' : '6px';
+                    item.style.borderRadius = '2px';
+                    item.style.background = colors[Math.floor(Math.random() * colors.length)];
+                } else {
+                    item.textContent = content;
+                }
+                
+                // Increased randomization for wider spread (x: -250px to 250px, y: -250px to 250px)
+                const x = (Math.random() * 500 - 250);
+                const y = (Math.random() * 500 - 250);
+
+                item.style.setProperty('--x', `${x}vw`); // Use viewport units for better screen coverage
+                item.style.setProperty('--y', `${y}vh`); // Use viewport units for better screen coverage
+                item.style.fontSize = `${10 + Math.random() * 25}px`; // Randomize size further
+
+                // Stagger the animation start
+                item.style.animationDelay = `${Math.random() * 0.7}s`; 
+
+                // Start the burst from the center of the screen
+                item.style.left = '50%';
+                item.style.top = '50%';
+
+                container.appendChild(item);
+                
+                // Remove item after animation completes 
+                setTimeout(() => item.remove(), 3000); 
+            }
+        }
+    </script>
+
+</body>
+</html>
